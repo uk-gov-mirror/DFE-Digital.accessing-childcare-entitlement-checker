@@ -1,65 +1,91 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
 @inject Microsoft.Extensions.Localization.IStringLocalizer<SharedResources> Shared
-@inject IViewLocalizer Localizer
-
 @model AccessingChildcareEntitlementChecker.Web.Services.FormPage
 
 @{
-    ViewData["Title"] = Model.Heading;
+    ViewData["Title"] = (ViewData.ModelState.IsValid ? "" : "Error: ") + Model?.Heading;
     Layout = "_Layout"; // Assuming a GDS-standard layout is present
     var control = Model.Fields?.FirstOrDefault();
     var controlType = control?.FieldType;
 
 }
+@{
+    //todo: change back link to use cms url when implemented}
+    @section BeforeContent {
 
-@section BeforeContent {
-    <govuk-back-link asp-controller="Home" asp-action="Start">
-        @Model.BackButtonLabel
-    </govuk-back-link>
-}
+        <govuk-back-link href="javascript:history.back()">
 
-<form method="post" novalidate>
-    @if(controlType=="radios")
-        {
-        <govuk-radios name="@control.FieldId">
-            <govuk-radios-fieldset>
-                <govuk-radios-fieldset-legend is-page-heading="true" class="govuk-fieldset__legend--l">
-                    @control.Label
-                </govuk-radios-fieldset-legend>
-
-                <govuk-radios-hint>
-                    @control.Hint
-                </govuk-radios-hint>
-
-                <govuk-radios-error-message>
-                   @control.ErrorMessage
-                </govuk-radios-error-message>
-
-
-                @foreach (var option in control.Options)
-                {
-                    <govuk-radios-item value="@option.Value">
-                        @option.Label
-                    </govuk-radios-item>
-                }
-            </govuk-radios-fieldset>
-        </govuk-radios>
-        }
-    @if (controlType == "textBox")
-    {
-        <govuk-input name="@control.FieldId" input-class="govuk-input--width-3" inputmode="numeric" pattern="[0-9]*" spellcheck="false">
-            <govuk-input-label is-page-heading="true" class="govuk-label--l"> @control.Label </govuk-input-label>
-            <govuk-input-hint>@control.Hint</govuk-input-hint>
-            <govuk-input-error-message>@control.ErrorMessage</govuk-input-error-message>
-        </govuk-input>
+            @Model.BackButtonLabel
+        </govuk-back-link>
     }
+    // @if (!ViewData.ModelState.IsValid)
+    // {
+    //     <govuk-error-summary>
+    //         <govuk-error-summary-title>There is a problem</govuk-error-summary-title>
+    //         @foreach (var modelState in ViewData.ModelState)
+    //         {
+    //             foreach (var error in modelState.Value.Errors)
+    //             {
+    //                 <govuk-error-summary-item href="#@modelState.Key">
+    //                     @error.ErrorMessage
+    //                 </govuk-error-summary-item>
+    //             }
+    //         }
+    //     </govuk-error-summary>
+    // }
 
-    <govuk-button type="submit">
-        Continue
-    </govuk-button>
-</form>
+    // @{
+    //     var isValid = ViewData.ModelState.IsValid;
+    // }
+    <form method="post" novalidate >
+        @if (controlType == "radios")
+        {
+            <govuk-radios name="@control.FieldId" for="@control.FieldId">
+                <govuk-radios-fieldset>
+                    <govuk-radios-fieldset-legend is-page-heading="true" class="govuk-fieldset__legend--l">
+                        @control.Label
+                    </govuk-radios-fieldset-legend>
+
+                    <govuk-radios-hint>
+                        @control.Hint
+                    </govuk-radios-hint>
 
 
+                    @if (!@ViewData.ModelState.IsValid)
+                    {
+                        <govuk-radios-error-message>
+                            @control.ErrorMessage
+                        </govuk-radios-error-message>
+                    }
+
+                    @foreach (var option in control.Options)
+                    {
+                        <govuk-radios-item value="@option.Value">
+                            @option.Label
+                        </govuk-radios-item>
+                    }
+                </govuk-radios-fieldset>
+            </govuk-radios>
+        }
+        @if (controlType == "textBox")
+        {
+            <govuk-input name="@control.FieldId" input-class="govuk-input--width-3" inputmode="numeric" pattern="[0-9]*" spellcheck="false">
+                <govuk-input-label is-page-heading="true" class="govuk-label--l"> @control.Label </govuk-input-label>
+                <govuk-input-hint>@control.Hint</govuk-input-hint>
+                @if (!@ViewData.ModelState.IsValid)
+                {
+                    <govuk-input-error-message>@control.ErrorMessage</govuk-input-error-message>
+                }
+
+            </govuk-input>
+        }
+
+        <govuk-button type="submit">
+            Continue
+        </govuk-button>
+    </form>
+
+}
 
 
 

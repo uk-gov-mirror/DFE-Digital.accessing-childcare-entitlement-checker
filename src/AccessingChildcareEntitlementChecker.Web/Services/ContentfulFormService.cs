@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AccessingChildcareEntitlementChecker.Web.Models;
 using Contentful.Core;
 using Contentful.Core.Models;
 using Contentful.Core.Search;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AccessingChildcareEntitlementChecker.Web.Services
 {
@@ -67,6 +68,32 @@ namespace AccessingChildcareEntitlementChecker.Web.Services
             return currentPage.DefaultNextPage?.PageId;
         }
 
+        public string ResolveNextPage(FormPage currentPage, FormSubmission submission)
+        {
+            if (currentPage?.RoutingRules == null || !currentPage.RoutingRules.Any())
+            {
+                return currentPage?.DefaultNextPage?.PageId;
+            }
+
+            foreach (var rule in currentPage.RoutingRules)
+            {
+                var targetFieldId = rule.ConditionField?.FieldId;
+                var answer = submission.Answers.FirstOrDefault(a => a.FieldId == targetFieldId);
+
+                if (answer != null)
+                {
+                    // Logic handles both single values (Radios) and multi-values (Checkboxes)
+                    var valueToCompare = answer is MultiValueAnswer multi ? string.Join(",", multi.Values) : answer.GetRawValue();
+
+                    if (EvaluateRule(rule.Operator, valueToCompare, rule.Value))
+                    {
+                        return rule.Destination?.PageId;
+                    }
+                }
+            }
+
+            return currentPage.DefaultNextPage?.PageId;
+        }
 
         public string ResolveNextPage(FormPage currentPage, string userAnswer)
         {
