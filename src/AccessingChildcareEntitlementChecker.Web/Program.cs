@@ -3,6 +3,7 @@ using AccessingChildcareEntitlementChecker.Web.Services;
 using GovUk.Frontend.AspNetCore;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
+using Contentful.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,11 @@ builder.Services
     })
     .AddViewLocalization();
 
+if (builder.Environment.IsDevelopment())
+{
+    builder.Configuration.AddUserSecrets<Program>();
+}
+
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
 
@@ -24,7 +30,8 @@ builder.Services
     .AddHealthChecks();
 
 builder.Services.AddGovUkFrontend();
-
+builder.Services.AddContentful(builder.Configuration);
+builder.Services.AddScoped<ContentfulFormService>();
 var app = builder.Build();
 
 var supportedCultures = new[] { new CultureInfo("en-GB") };
@@ -55,10 +62,14 @@ app.UseAuthorization();
 
 app.MapHealthChecks("/health");
 
-app.UseExceptionHandler("/Error");
-
+//app.UseExceptionHandler("/Error");
+app.MapControllers();
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Start}/{id?}");
+    pattern: "{controller=FormJourney}/{action=Index}/{id?}");
+
+//app.MapControllerRoute(
+//    name: "default",
+//    pattern: "{controller=Home}/{action=Start}/{id?}");
 
 app.Run();

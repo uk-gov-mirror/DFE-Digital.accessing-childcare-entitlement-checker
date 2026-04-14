@@ -1,0 +1,136 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject Microsoft.Extensions.Localization.IStringLocalizer<SharedResources> Shared
+@inject IViewLocalizer Localizer
+
+@model AccessingChildcareEntitlementChecker.Web.Services.FormPage
+
+@{
+    ViewData["Title"] = Model.Heading;
+    Layout = "_Layout"; // Assuming a GDS-standard layout is present
+    var control = Model.Fields?.FirstOrDefault();
+    var controlType = control?.FieldType;
+
+}
+
+@section BeforeContent {
+    <govuk-back-link asp-controller="Home" asp-action="Start">
+        @Model.BackButtonLabel
+    </govuk-back-link>
+}
+
+<form method="post" novalidate>
+    @if(controlType=="radios")
+        {
+        <govuk-radios name="@control.FieldId">
+            <govuk-radios-fieldset>
+                <govuk-radios-fieldset-legend is-page-heading="true" class="govuk-fieldset__legend--l">
+                    @control.Label
+                </govuk-radios-fieldset-legend>
+
+                <govuk-radios-hint>
+                    @control.Hint
+                </govuk-radios-hint>
+
+                <govuk-radios-error-message />
+
+                @foreach (var option in control.Options)
+                {
+                    <govuk-radios-item value="@option.Value">
+                        @option.Label
+                    </govuk-radios-item>
+                }
+            </govuk-radios-fieldset>
+        </govuk-radios>
+        }
+    @if (controlType == "textBox")
+    {
+        <govuk-input name="@control.FieldId" input-class="govuk-input--width-3" inputmode="numeric" pattern="[0-9]*" spellcheck="false">
+            <govuk-input-label is-page-heading="true" class="govuk-label--l"> @control.Label </govuk-input-label>
+            <govuk-input-hint>@control.Hint</govuk-input-hint>
+            <govuk-input-error-message>@control.ErrorMessage</govuk-input-error-message>
+        </govuk-input>
+    }
+
+    <govuk-button type="submit">
+        Continue
+    </govuk-button>
+</form>
+
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <form asp-action="Process" asp-route-pageId="@Model.PageId" method="post" novalidate>
+            @Html.AntiForgeryToken()
+
+            @* 1. Dynamic Heading *@
+            <h1 class="govuk-heading-l">@Model.Heading</h1>
+
+            @* 2. Contentful Rich Text (Simplified for POC) *@
+            @if (Model.Content != null)
+            {
+                @* In a real app, use a RichTextRenderer here *@
+                <div class="govuk-body">
+                    <p>Guidance text from Contentful goes here.</p>
+                </div>
+            }
+            @if (Model.Fields==null)
+                {
+                    <div>
+                        <p>Fields not added here</p>
+                    </div>
+                    return;
+                }
+                @* 3. Dynamic Field Rendering Loop *@
+            @foreach (var field in Model.Fields)
+            {
+                @if (field.FieldType == "radios")
+                {
+                    <div class="govuk-form-group">
+                        <fieldset class="govuk-fieldset">
+                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                                <h2 class="govuk-fieldset__heading">@field.Label</h2>
+                            </legend>
+
+                            @if (!string.IsNullOrEmpty(field.Hint))
+                            {
+                                <div class="govuk-hint">@field.Hint</div>
+                            }
+
+                            <div class="govuk-radios" data-module="govuk-radios">
+                                @foreach (var option in field.Options)
+                                {
+                                    <div class="govuk-radios__item">
+                                        <input class="govuk-radios__input" id="@field.FieldId-@option.Value" name="@field.FieldId" type="radio" value="@option.Value">
+                                        <label class="govuk-label govuk-radios__label" for="@field.FieldId-@option.Value">
+                                            @option.Label
+                                        </label>
+                                    </div>
+                                }
+                            </div>
+                        </fieldset>
+                    </div>
+                }
+                else if (field.FieldType== "textBox")
+                {
+                    <div class="govuk-form-group">
+                        <label class="govuk-label" for="@field.FieldId">@field.Label</label>
+                        <input class="govuk-input" id="@field.FieldId" name="@field.FieldId" type="text">
+                    </div>
+                }
+            }
+
+            @* 4. Actions *@
+            <button type="submit" class="govuk-button" data-module="govuk-button">
+                Continue
+            </button>
+
+        </form>
+    </div>
+</div>
+
+
+
+
+
+
