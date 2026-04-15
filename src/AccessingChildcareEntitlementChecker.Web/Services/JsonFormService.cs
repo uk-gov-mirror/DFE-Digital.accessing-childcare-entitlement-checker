@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace AccessingChildcareEntitlementChecker.Web.Services
 {
-    public class JsonFormService : IJsonFormService
+    public class JsonFormService : ICmsFormService
     {
 
         private readonly IWebHostEnvironment _env;

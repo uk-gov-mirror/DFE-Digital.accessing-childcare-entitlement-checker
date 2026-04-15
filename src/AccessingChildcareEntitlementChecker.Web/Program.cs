@@ -31,8 +31,13 @@ builder.Services
 
 builder.Services.AddGovUkFrontend();
 builder.Services.AddContentful(builder.Configuration);
-builder.Services.AddScoped<ContentfulFormService>();
-builder.Services.AddScoped<JsonFormService>();
+//builder.Services.AddScoped<ContentfulFormService>();
+//builder.Services.AddScoped<JsonFormService>();
+
+builder.Services.AddScoped<ICmsFormService, ContentfulFormService>();
+//builder.Services.AddScoped<ICmsFormService, JsonFormService>();
+
+
 var app = builder.Build();
 
 var supportedCultures = new[] { new CultureInfo("en-GB") };

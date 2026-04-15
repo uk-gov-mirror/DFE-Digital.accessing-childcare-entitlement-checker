@@ -9,10 +9,10 @@ namespace AccessingChildcareEntitlementChecker.Web.Controllers
 {
     public class FormJourneyController : Controller
     {
-        private readonly JsonFormService _cmsService;
+        private readonly ICmsFormService _cmsService;
 
 
-        public FormJourneyController(JsonFormService cmsService)
+        public FormJourneyController(ICmsFormService cmsService)
         {
             _cmsService = cmsService;
         }
@@ -32,7 +32,7 @@ namespace AccessingChildcareEntitlementChecker.Web.Controllers
 
             if (page == null)
             {
-                return NotFound("Page not found in Contentful. Check Page ID and Publish status.");
+                return NotFound("Page not found in cms. Check Page ID and Publish status.");
             }
 
             return View(page);

@@ -3,7 +3,7 @@
 @model AccessingChildcareEntitlementChecker.Web.Services.FormPage
 
 @{
-    ViewData["Title"] = (ViewData.ModelState.IsValid ? "" : "Error: ") + Model?.Heading;
+    ViewData["Title"] = (ViewData.ModelState.IsValid ? Model?.Heading : $"Error: {Model?.Heading}");
     Layout = "_Layout"; // Assuming a GDS-standard layout is present
     var control = Model.Fields?.FirstOrDefault();
     var controlType = control?.FieldType;
@@ -18,6 +18,9 @@
             @Model.BackButtonLabel
         </govuk-back-link>
     }
+
+    // <h1 style="display:none">@Model.Heading</h1>
+
     // @if (!ViewData.ModelState.IsValid)
     // {
     //     <govuk-error-summary>

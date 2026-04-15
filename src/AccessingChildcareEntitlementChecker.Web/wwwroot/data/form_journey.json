@@ -6,7 +6,7 @@
       "fields": [
         {
           "fieldId": "role-selection",
-          "type": "radios",
+          "fieldType": "radios",
           "label": "Select your role",
           "hint": "This helps us show you the right information.",
           "options": [
@@ -47,7 +47,7 @@
       "fields": [
         {
           "fieldId": "income-amount",
-          "type": "textbox",
+          "fieldType": "textBox",
           "label": "Total annual income",
           "hint": "Before tax and national insurance."
         }

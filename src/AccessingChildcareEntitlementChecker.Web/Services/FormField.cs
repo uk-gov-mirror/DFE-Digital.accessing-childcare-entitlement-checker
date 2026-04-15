@@ -10,7 +10,7 @@ namespace AccessingChildcareEntitlementChecker.Web.Services
         public string Hint { get; set; }
         public List<FieldOption> Options { get; set; }
 
-        [JsonProperty("Type")]
+        //[JsonProperty("Type")]
         public string FieldType { get; set; } // e.g., "text", "radios"
 
         public string ErrorMessage { get; set; }

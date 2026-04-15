@@ -14,7 +14,7 @@ namespace AccessingChildcareEntitlementChecker.Web.Services
     /// This service acts as the 'Logic Engine' that interprets CMS data into a GDS journey.
     /// Relevant: Yes - The SDK fetches the data, but this service evaluates the business rules.
     /// </summary>
-    public class ContentfulFormService : IContentfulFormService
+    public class ContentfulFormService : ICmsFormService
     {
         private readonly IContentfulClient _client;
 
@@ -43,30 +43,30 @@ namespace AccessingChildcareEntitlementChecker.Web.Services
         /// Logic Engine: Determines the next page based on user input and CMS-defined rules.
         /// Now handles ConditionField as a Reference to a FormField.
         /// </summary>
-        public string ResolveNextPage(FormPage currentPage, Dictionary<string, string> userAnswers)
-        {
-            if (currentPage.RoutingRules == null || !currentPage.RoutingRules.Any())
-            {
-                return currentPage.DefaultNextPage?.PageId;
-            }
+        //public string ResolveNextPage(FormPage currentPage, Dictionary<string, string> userAnswers)
+        //{
+        //    if (currentPage.RoutingRules == null || !currentPage.RoutingRules.Any())
+        //    {
+        //        return currentPage.DefaultNextPage?.PageId;
+        //    }
 
-            foreach (var rule in currentPage.RoutingRules)
-            {
-                // Accessing FieldId via the Resolved Reference
-                var targetFieldId = rule.ConditionField?.FieldId;
+        //    foreach (var rule in currentPage.RoutingRules)
+        //    {
+        //        // Accessing FieldId via the Resolved Reference
+        //        var targetFieldId = rule.ConditionField?.FieldId;
 
-                if (!string.IsNullOrEmpty(targetFieldId) && userAnswers.TryGetValue(targetFieldId, out var userValue))
-                {
-                    if (EvaluateRule(rule.Operator, userValue, rule.Value))
-                    {
-                        return rule.Destination?.PageId;
-                    }
-                }
-            }
+        //        if (!string.IsNullOrEmpty(targetFieldId) && userAnswers.TryGetValue(targetFieldId, out var userValue))
+        //        {
+        //            if (EvaluateRule(rule.Operator, userValue, rule.Value))
+        //            {
+        //                return rule.Destination?.PageId;
+        //            }
+        //        }
+        //    }
 
-            // Fallback to the default path if no rules match
-            return currentPage.DefaultNextPage?.PageId;
-        }
+        //    // Fallback to the default path if no rules match
+        //    return currentPage.DefaultNextPage?.PageId;
+        //}
 
         public string ResolveNextPage(FormPage currentPage, FormSubmission submission)
         {
@@ -95,10 +95,10 @@ namespace AccessingChildcareEntitlementChecker.Web.Services
             return currentPage.DefaultNextPage?.PageId;
         }
 
-        public string ResolveNextPage(FormPage currentPage, string userAnswer)
-        {
-            return null;
-        }
+        //public string ResolveNextPage(FormPage currentPage, string userAnswer)
+        //{
+        //    return null;
+        //}
 
         private bool EvaluateRule(string op, string actual, string expected)
         {
