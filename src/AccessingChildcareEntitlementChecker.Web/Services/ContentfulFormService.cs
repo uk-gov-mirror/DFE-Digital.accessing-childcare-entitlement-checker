@@ -1,10 +1,10 @@
 ﻿using AccessingChildcareEntitlementChecker.Web.Models;
 using Contentful.Core;
-using Contentful.Core.Models;
 using Contentful.Core.Search;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace AccessingChildcareEntitlementChecker.Web.Services
@@ -14,7 +14,7 @@ namespace AccessingChildcareEntitlementChecker.Web.Services
     /// This service acts as the 'Logic Engine' that interprets CMS data into a GDS journey.
     /// Relevant: Yes - The SDK fetches the data, but this service evaluates the business rules.
     /// </summary>
-    public class ContentfulFormService
+    public class ContentfulFormService : IContentfulFormService
     {
         private readonly IContentfulClient _client;
 
@@ -34,8 +34,8 @@ namespace AccessingChildcareEntitlementChecker.Web.Services
                 .Include(4); // Deep include to resolve Page -> Rules -> ConditionField (FormField)
 
             var result = await _client.GetEntries(builder);
-            
-            
+
+
             return result.FirstOrDefault();
         }
 
@@ -113,47 +113,5 @@ namespace AccessingChildcareEntitlementChecker.Web.Services
                 _ => false
             };
         }
-    }
-
-    // --- Contentful Models (Aligned with FormBuilder Space) ---
-
-    public class FormPage
-    {
-        public string PageId { get; set; }
-        public string Heading { get; set; }
-        public Document Content { get; set; } // Contentful Rich Text
-        public List<FormField> Fields { get; set; }
-        public FormPage DefaultNextPage { get; set; }
-        public List<RoutingRule> RoutingRules { get; set; }
-
-        public string BackButtonLabel { get; set; }
-    }
-
-    public class RoutingRule
-    {
-        public string RuleName { get; set; }
-        public FormField ConditionField { get; set; } // Reference to a FormField
-        public string Operator { get; set; }          // e.g., "equals"
-        public string Value { get; set; }             // e.g., "parent"
-        public FormPage Destination { get; set; }      // Reference to a FormPage
-    }
-
-    public class FormField
-    {
-        public string FieldId { get; set; }
-        public string[] Type { get; set; } // radios, checkboxes, select, text
-        public string Label { get; set; }
-        public string Hint { get; set; }
-        public List<FieldOption> Options { get; set; }
-        public string FieldType { get; set; } // e.g., "text", "radios"
-
-        public string ErrorMessage { get; set; }
-
-    }
-
-    public class FieldOption
-    {
-        public string Label { get; set; }
-        public string Value { get; set; }
     }
 }

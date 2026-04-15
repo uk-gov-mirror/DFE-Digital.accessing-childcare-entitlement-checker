@@ -19,7 +19,7 @@ namespace AccessingChildcareEntitlementChecker.Web.ModelBinder
             }
 
             // 2. Resolve the CMS Service via the RequestServices (DI)
-            var cmsService = bindingContext.HttpContext.RequestServices.GetRequiredService<ContentfulFormService>();
+            var cmsService = bindingContext.HttpContext.RequestServices.GetRequiredService<JsonFormService>();
             var currentPage = await cmsService.GetPageAsync(pageId);
 
             if (currentPage == null)

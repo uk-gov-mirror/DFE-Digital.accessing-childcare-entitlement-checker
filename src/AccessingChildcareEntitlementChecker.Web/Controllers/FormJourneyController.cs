@@ -9,9 +9,10 @@ namespace AccessingChildcareEntitlementChecker.Web.Controllers
 {
     public class FormJourneyController : Controller
     {
-        private readonly ContentfulFormService _cmsService;
+        private readonly JsonFormService _cmsService;
 
-        public FormJourneyController(ContentfulFormService cmsService)
+
+        public FormJourneyController(JsonFormService cmsService)
         {
             _cmsService = cmsService;
         }
@@ -23,6 +24,7 @@ namespace AccessingChildcareEntitlementChecker.Web.Controllers
         [HttpGet("journey/{pageId?}")]
         public async Task<IActionResult> Index(string pageId = "user-role-page")
         {
+            
             
             
             

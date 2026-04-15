@@ -1,0 +1,77 @@
+{
+  "pages": [
+    {
+      "pageId": "user-role-page",
+      "heading": "Are you a parent or a childcare provider?",
+      "fields": [
+        {
+          "fieldId": "role-selection",
+          "type": "radios",
+          "label": "Select your role",
+          "hint": "This helps us show you the right information.",
+          "options": [
+            {
+              "label": "Parent",
+              "value": "parent"
+            },
+            {
+              "label": "Childcare Provider",
+              "value": "provider"
+            }
+          ]
+        }
+      ],
+      "defaultNextPage": {
+        "pageId": "page-error"
+      },
+      "jsonRoutingRules": [
+        {
+          "ruleName": "Route to Parent",
+          "conditionFieldId": "role-selection",
+          "operator": "equals",
+          "value": "parent",
+          "destinationPageId": "page-parent-income"
+        },
+        {
+          "ruleName": "Route to Provider",
+          "conditionFieldId": "role-selection",
+          "operator": "equals",
+          "value": "provider",
+          "destinationPageId": "page-provider-guidance"
+        }
+      ]
+    },
+    {
+      "pageId": "page-parent-income",
+      "heading": "What is your annual income?",
+      "fields": [
+        {
+          "fieldId": "income-amount",
+          "type": "textbox",
+          "label": "Total annual income",
+          "hint": "Before tax and national insurance."
+        }
+      ],
+      "defaultNextPage": {
+        "pageId": "page-residency-status"
+      },
+      "jsonRoutingRules": [
+        {
+          "ruleName": "High Income Warning",
+          "conditionFieldId": "income-amount",
+          "operator": "greaterThan",
+          "value": "100000",
+          "destinationPageId": "page-high-income-warning"
+        }
+      ]
+    },
+    {
+      "pageId": "page-high-income-warning",
+      "heading": "Your income affects eligibility",
+      "fields": [],
+      "defaultNextPage": {
+        "pageId": "page-residency-status"
+      }
+    }
+  ]
+}
