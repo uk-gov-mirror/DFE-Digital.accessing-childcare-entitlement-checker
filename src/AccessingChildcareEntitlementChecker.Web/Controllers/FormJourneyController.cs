@@ -10,11 +10,12 @@ namespace AccessingChildcareEntitlementChecker.Web.Controllers
     public class FormJourneyController : Controller
     {
         private readonly ICmsFormService _cmsService;
+        private readonly ISessionService _sessionService;
 
-
-        public FormJourneyController(ICmsFormService cmsService)
+        public FormJourneyController(ICmsFormService cmsService, ISessionService sessionService)
         {
             _cmsService = cmsService;
+            _sessionService = sessionService;
         }
 
         /// <summary>
@@ -107,26 +108,76 @@ namespace AccessingChildcareEntitlementChecker.Web.Controllers
                 return View("Index", currentPage);
             }
 
-            if(submission !=null)
+            // 2. Phase 2: Persist answers to Session BEFORE moving to the next page
+            // This builds the 'Consolidated Submission' used by the Results page.
+            foreach (var answer in submission.Answers)
             {
-                string nextPageId = _cmsService.ResolveNextPage(currentPage, submission);
-
-                if (!string.IsNullOrEmpty(nextPageId))
-                {
-                    // Fallback if no rules match and no default is set
-                   // return RedirectToAction("Index", new { pageId = "page-error" });
-                    return RedirectToAction("Index", new { pageId = nextPageId });
-                }
-
+                _sessionService.SaveAnswer(answer.FieldId, answer.GetRawValue());
             }
-            return BadRequest("Invalid form submission structure.");
+
+            // 3. Execute Routing Logic
+            string nextPageId = _cmsService.ResolveNextPage(currentPage, submission);
+
+            if (string.IsNullOrEmpty(nextPageId))
+            {
+                return RedirectToAction("Index", new { pageId = "page-error" });
+            }
+
+            // 4. Phase 2: Polymorphic Redirection
+            // Fetch the next page metadata to check if we should switch to the ResultsController
+            var nextPage = await _cmsService.GetPageAsync(nextPageId);
+
+            if (nextPage?.PageId == "results")
+                //if (nextPage?.PageType?.ToLower() == "results")
+            {
+                return RedirectToAction("Index", "Results", new { pageId = nextPageId });
+            }
+
+            return RedirectToAction("Index", new { pageId = nextPageId });
+
+
+
+
+            //if (submission !=null)
+            //{
+            //    string nextPageId = _cmsService.ResolveNextPage(currentPage, submission);
+
+            //    if (!string.IsNullOrEmpty(nextPageId))
+            //    {
+            //        // Fallback if no rules match and no default is set
+            //       // return RedirectToAction("Index", new { pageId = "page-error" });
+            //        return RedirectToAction("Index", new { pageId = nextPageId });
+            //    }
+
+            //}
+            //return BadRequest("Invalid form submission structure.");
             // 2. Execute Routing Logic
 
             // 3. Move to the next step in the journey
 
         }
 
+        //public async Task<IActionResult> Process(string pageId, [ModelBinder(BinderType = typeof(FormSubmissionModelBinder))] FormSubmission submission)
+        //{
+        //    var currentPage = await _cmsService.GetPageAsync(pageId);
 
+        //    // Phase 2: Persist current answers to Session
+        //    foreach (var answer in submission.Answers)
+        //    {
+        //        _sessionService.SaveAnswer(answer.FieldId, answer.GetRawValue());
+        //    }
+
+        //    string nextPageId = _cmsService.ResolveNextPage(currentPage, submission);
+        //    var nextPage = await _cmsService.GetPageAsync(nextPageId);
+
+        //    // Phase 2: Polymorphic Redirection
+        //    if (nextPage?.PageType == "results")
+        //    {
+        //        return RedirectToAction("Index", "Results", new { pageId = nextPageId });
+        //    }
+
+        //    return RedirectToAction("Index", new { pageId = nextPageId });
+        //}
     }
 }
 
