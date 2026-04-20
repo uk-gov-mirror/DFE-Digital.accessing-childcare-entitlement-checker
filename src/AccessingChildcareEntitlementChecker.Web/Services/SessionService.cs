@@ -1,5 +1,4 @@
-﻿using AccessingChildcareEntitlementChecker.Web.Cms;
-using AccessingChildcareEntitlementChecker.Web.Models;
+﻿using AccessingChildcareEntitlementChecker.Web.Models;
 using Microsoft.AspNetCore.Http;
 using System.Text.Json;
 
@@ -24,27 +23,29 @@ namespace AccessingChildcareEntitlementChecker.Web.Services
 
         public void SaveAnswer(string fieldId, string value)
         {
-            var submission = GetConsolidatedSubmission();
+            var data = GetFormData();
 
-            // Update existing or add new
-            var existing = submission.Answers.FirstOrDefault(a => a.FieldId == fieldId);
-            if (existing != null)
-            {
-                submission.Answers.Remove(existing);
-            }
+            var existing = data.Answers.FirstOrDefault(a => a.FieldId == fieldId);
+            if (existing != null) data.Answers.Remove(existing);
 
-            submission.Answers.Add(new SingleValueAnswer { FieldId = fieldId, SelectedValue = value });
+            data.Answers.Add(new SingleValueAnswer { FieldId = fieldId, SelectedValue = value });
 
-            var json = JsonSerializer.Serialize(submission);
+            var json = JsonSerializer.Serialize(data);
             _httpContextAccessor.HttpContext.Session.SetString(SessionKey, json);
         }
 
-        public FormSubmission GetConsolidatedSubmission()
+        public FormData GetFormData()
         {
             var json = _httpContextAccessor.HttpContext.Session.GetString(SessionKey);
-            if (string.IsNullOrEmpty(json)) return new FormSubmission();
+            if (string.IsNullOrEmpty(json)) return new FormData();
 
-            return JsonSerializer.Deserialize<FormSubmission>(json) ?? new FormSubmission();
+            return JsonSerializer.Deserialize<FormData>(json) ?? new FormData();
+        }
+
+        // This is where you convert the 'Data' into a 'Submission' for your logic
+        public FormSubmission GetConsolidatedSubmission()
+        {
+            return new FormSubmission(GetFormData());
         }
 
         public void Clear() => _httpContextAccessor.HttpContext.Session.Remove(SessionKey);

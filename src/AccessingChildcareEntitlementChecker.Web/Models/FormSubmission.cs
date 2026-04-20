@@ -1,5 +1,6 @@
 ﻿using AccessingChildcareEntitlementChecker.Web.Services;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace AccessingChildcareEntitlementChecker.Web.Models
 {
@@ -11,8 +12,13 @@ namespace AccessingChildcareEntitlementChecker.Web.Models
     public class FormSubmission
     {
         public string PageId { get; set; }
-        public List<AnswerBase> Answers { get; set; } = new();
+        public List<AnswerBase> Answers { get; set; }
 
+        public FormSubmission(FormData data)
+        {
+            PageId = data.CurrentPageId;
+            Answers = data.Answers;
+        }
         /// <summary>
         /// Validates the submission against the Contentful Field definitions.
         /// AZ-500: Server-side validation is the primary defense against 'Bypassing Client Checks'.
@@ -35,7 +41,11 @@ namespace AccessingChildcareEntitlementChecker.Web.Models
             return results;
         }
     }
-
+    [JsonPolymorphic(TypeDiscriminatorPropertyName = "$type")]
+    [JsonDerivedType(typeof(TextAnswer), typeDiscriminator: "text")]
+    [JsonDerivedType(typeof(SingleValueAnswer), typeDiscriminator: "single")]
+    [JsonDerivedType(typeof(MultiValueAnswer), typeDiscriminator: "multi")]
+    [JsonDerivedType(typeof(DateAnswer), typeDiscriminator: "date")]
     public abstract class AnswerBase
     {
         public string FieldId { get; set; }

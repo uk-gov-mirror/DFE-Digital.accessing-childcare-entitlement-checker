@@ -1,5 +1,12 @@
-﻿@using Microsoft.AspNetCore.Mvc.Localization
+﻿@* @using Microsoft.AspNetCore.Components.Web *@
+@using System.Net
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Contentful.Core.Configuration
+@using Contentful.Core.Models
 @inject Microsoft.Extensions.Localization.IStringLocalizer<SharedResources> Shared
+@inject HtmlRenderer HtmlRenderer
+@using Contentful.Core
+
 @model AccessingChildcareEntitlementChecker.Web.Services.FormPage
 
 @{
@@ -7,7 +14,9 @@
     Layout = "_Layout"; // Assuming a GDS-standard layout is present
     var control = Model.Fields?.FirstOrDefault();
     var controlType = control?.FieldType;
-
+    var html = await HtmlRenderer.ToHtml(Model.Content);
+    // This decodes &lt; to < so Html.Raw can render it properly
+    var decodedHtml = WebUtility.HtmlDecode(html);
 }
 @{
     //todo: change back link to use cms url when implemented}
@@ -82,7 +91,15 @@
 
             </govuk-input>
         }
+        @if (controlType == "freeText")
+        {
+            // <contentful-rich-text document="@decodedHtml"></contentful-rich-text>
+            <div class="govuk-body">
 
+                @Html.Raw(decodedHtml)
+            </div>
+            
+        }
         <govuk-button type="submit">
             Continue
         </govuk-button>

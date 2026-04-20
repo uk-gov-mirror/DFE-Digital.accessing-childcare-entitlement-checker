@@ -75,6 +75,11 @@ namespace AccessingChildcareEntitlementChecker.Web.Services
                 _ => false
             };
         }
+
+        public Task<ResultsPage> GetResultsPageAsync()
+        {
+            throw new NotImplementedException();
+        }
     }
 
 }

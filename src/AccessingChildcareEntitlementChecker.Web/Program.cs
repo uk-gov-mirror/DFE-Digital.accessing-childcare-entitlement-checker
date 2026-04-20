@@ -36,7 +36,7 @@ builder.Services.AddContentful(builder.Configuration);
 
 builder.Services.AddScoped<ICmsFormService, ContentfulFormService>();
 //builder.Services.AddScoped<ICmsFormService, JsonFormService>();
-
+builder.Services.AddScoped<ISessionService, SessionService>();
 
 var app = builder.Build();
 

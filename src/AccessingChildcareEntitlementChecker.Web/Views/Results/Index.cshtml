@@ -1,0 +1,43 @@
+﻿@using AccessingChildcareEntitlementChecker.Web.Services
+@* @using Microsoft.AspNetCore.Components.Web *@
+@using System.Net
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Contentful.Core.Configuration
+@using Contentful.Core.Models
+@inject Microsoft.Extensions.Localization.IStringLocalizer<SharedResources> Shared
+@inject HtmlRenderer HtmlRenderer
+@using Contentful.Core
+@model ResultsPage
+@{
+    var html = await HtmlRenderer.ToHtml(Model.Guidance);
+    // This decodes &lt; to < so Html.Raw can render it properly
+    var decodedHtml = WebUtility.HtmlDecode(html);
+}
+@* <table class="govuk-table">
+    <caption class="govuk-table__caption govuk-table__caption--m">What Jack can get now</caption>
+    <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">15 hours and 2 years old receiving support</th>
+            <th scope="col" class="govuk-table__header">Amount</th>
+        </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+        <tr class="govuk-table__row">
+            <th scope="row" class="govuk-table__header">First 6 weeks</th>
+            <td class="govuk-table__cell">£109.80 per week</td>
+        </tr>
+        <tr class="govuk-table__row">
+            <th scope="row" class="govuk-table__header">Next 33 weeks</th>
+            <td class="govuk-table__cell">£109.80 per week</td>
+        </tr>
+        <tr class="govuk-table__row">
+            <th scope="row" class="govuk-table__header">Total estimated pay</th>
+            <td class="govuk-table__cell">£4,282.20</td>
+        </tr>
+    </tbody>
+</table> *@
+
+<div class="govuk-body">
+
+    @Html.Raw(decodedHtml.Replace("[Child Name]", ViewData["ChildName"]?.ToString() ?? "your child"))
+</div>

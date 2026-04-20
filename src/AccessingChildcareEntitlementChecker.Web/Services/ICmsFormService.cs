@@ -6,5 +6,7 @@ namespace AccessingChildcareEntitlementChecker.Web.Services
     {
         Task<FormPage> GetPageAsync(string pageId);
         string ResolveNextPage(FormPage currentPage, FormSubmission submission);
+
+        Task<ResultsPage> GetResultsPageAsync();
     }
 }

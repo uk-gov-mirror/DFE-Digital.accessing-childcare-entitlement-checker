@@ -39,6 +39,19 @@ namespace AccessingChildcareEntitlementChecker.Web.Services
             return result.FirstOrDefault();
         }
 
+        public async Task<ResultsPage> GetResultsPageAsync()
+        {
+            var builder = QueryBuilder<ResultsPage>.New
+                .ContentTypeIs("resultsPage")
+                .Include(1); // Deep include to resolve Page -> Rules -> ConditionField (FormField)
+
+            var result = await _client.GetEntries(builder);
+
+
+            return result.FirstOrDefault();
+        }
+
+
         /// <summary>
         /// Logic Engine: Determines the next page based on user input and CMS-defined rules.
         /// Now handles ConditionField as a Reference to a FormField.

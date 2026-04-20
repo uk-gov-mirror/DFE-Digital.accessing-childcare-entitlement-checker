@@ -28,7 +28,7 @@ namespace AccessingChildcareEntitlementChecker.Web.ModelBinder
                 return;
             }
 
-            var submission = new FormSubmission { PageId = pageId };
+            var data = new FormData { CurrentPageId = pageId };
             var form = bindingContext.HttpContext.Request.Form;
 
             // 3. Polymorphic Mapping based on Contentful Metadata
@@ -61,9 +61,10 @@ namespace AccessingChildcareEntitlementChecker.Web.ModelBinder
                     }
                 };
 
-                submission.Answers.Add(answer);
+                data.Answers.Add(answer);
             }
 
+            var submission = new FormSubmission(data);
             bindingContext.Result = ModelBindingResult.Success(submission);
         }
     }
