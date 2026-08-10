@@ -34,10 +34,10 @@ public class PartnerAgeTests(IntegrationTestFixture factory) : IClassFixture<Int
     [InlineData(ReturnTo.CheckAnswers, null, NationalityOption.BritishOrIrishCitizen, null, null, AgeRange.EighteenToTwenty, "/work-status/work-partner")]
     [InlineData(ReturnTo.CheckAnswers, AgeRange.EighteenToTwenty, NationalityOption.BritishOrIrishCitizen, null, null, AgeRange.EighteenToTwenty, "/work-status/work-partner")]
     [InlineData(ReturnTo.CheckAnswers, AgeRange.EighteenToTwenty, NationalityOption.BritishOrIrishCitizen, null, WeeklyEarningsOption.AboveThreshold, AgeRange.TwentyOneOrOver, "/work-status/work-partner")]
-    [InlineData(ReturnTo.CheckAnswers, AgeRange.EighteenToTwenty, NationalityOption.BritishOrIrishCitizen, PartnerPaidWorkOption.Yes, null, AgeRange.EighteenToTwenty, "/earnings/wage-partner")]
-    [InlineData(ReturnTo.CheckAnswers, AgeRange.EighteenToTwenty, NationalityOption.BritishOrIrishCitizen, PartnerPaidWorkOption.No, null, AgeRange.EighteenToTwenty, "/check-your-answers")]
-    [InlineData(ReturnTo.CheckAnswers, AgeRange.EighteenToTwenty, NationalityOption.BritishOrIrishCitizen, PartnerPaidWorkOption.Yes, WeeklyEarningsOption.AboveThreshold, AgeRange.TwentyOneOrOver, "/earnings/wage-partner")]
-    [InlineData(ReturnTo.CheckAnswers, AgeRange.EighteenToTwenty, NationalityOption.BritishOrIrishCitizen, PartnerPaidWorkOption.Yes, WeeklyEarningsOption.AboveThreshold, AgeRange.EighteenToTwenty, "/check-your-answers")]
+    [InlineData(ReturnTo.CheckAnswers, AgeRange.EighteenToTwenty, NationalityOption.BritishOrIrishCitizen, PartnerPaidWorkOption.Yes, null, AgeRange.EighteenToTwenty, "/work-status/work-partner")]
+    [InlineData(ReturnTo.CheckAnswers, AgeRange.EighteenToTwenty, NationalityOption.BritishOrIrishCitizen, PartnerPaidWorkOption.No, null, AgeRange.EighteenToTwenty, "/work-status/work-partner")]
+    [InlineData(ReturnTo.CheckAnswers, AgeRange.EighteenToTwenty, NationalityOption.BritishOrIrishCitizen, PartnerPaidWorkOption.Yes, WeeklyEarningsOption.AboveThreshold, AgeRange.TwentyOneOrOver, "/work-status/work-partner")]
+    [InlineData(ReturnTo.CheckAnswers, AgeRange.EighteenToTwenty, NationalityOption.BritishOrIrishCitizen, PartnerPaidWorkOption.Yes, WeeklyEarningsOption.AboveThreshold, AgeRange.EighteenToTwenty, "/work-status/work-partner")]
     public async Task Post_Valid_Redirects(
         string? returnTo,
         AgeRange? oldPartnerAge,

@@ -30,12 +30,12 @@ public class PartnerChildcareSupportTests(IntegrationTestFixture factory) : ICla
     }
 
     [Theory]
-    [InlineData(null, PartnerChildcareSupportOption.ChildcareVouchers, null, "/benefits/childcare-vouchers-partner")]
-    [InlineData(null, PartnerChildcareSupportOption.ChildcareBursaryOrGrant, null, "/check-your-answers")]
-    [InlineData(ReturnTo.CheckAnswers, PartnerChildcareSupportOption.ChildcareVouchers, null, "/benefits/childcare-vouchers-partner")]
-    [InlineData(ReturnTo.CheckAnswers, PartnerChildcareSupportOption.ChildcareVouchers, ChildcareVoucherReceiptOption.WorkplaceNurseryScheme, "/check-your-answers")]
-    [InlineData(ReturnTo.CheckAnswers, PartnerChildcareSupportOption.ChildcareBursaryOrGrant, null, "/check-your-answers")]
-    public async Task Post_Valid_Redirects(string? returnTo, PartnerChildcareSupportOption partnerChildcareSupport, ChildcareVoucherReceiptOption? partnerChildcareVoucherReceipt, string continueUrl)
+    [InlineData(null, PartnerChildcareSupportOption.ChildcareVouchers, null)]
+    [InlineData(null, PartnerChildcareSupportOption.ChildcareBursaryOrGrant, null)]
+    [InlineData(ReturnTo.CheckAnswers, PartnerChildcareSupportOption.ChildcareVouchers, null)]
+    [InlineData(ReturnTo.CheckAnswers, PartnerChildcareSupportOption.ChildcareVouchers, ChildcareVoucherReceiptOption.WorkplaceNurseryScheme)]
+    [InlineData(ReturnTo.CheckAnswers, PartnerChildcareSupportOption.ChildcareBursaryOrGrant, null)]
+    public async Task Post_Valid_Redirects(string? returnTo, PartnerChildcareSupportOption partnerChildcareSupport, ChildcareVoucherReceiptOption? partnerChildcareVoucherReceipt)
     {
         using var client = factory.CreateClientWithJourneyState(new JourneyState
         {
@@ -55,7 +55,7 @@ public class PartnerChildcareSupportTests(IntegrationTestFixture factory) : ICla
             new KeyValuePair<string, string>("PartnerChildcareSupport", partnerChildcareSupport.ToString())
         ], TestContext.Current.CancellationToken);
 
-        postResponse.AssertRedirect(continueUrl);
+        postResponse.AssertRedirect("/benefits/childcare-vouchers-partner");
     }
 
     [Theory]
